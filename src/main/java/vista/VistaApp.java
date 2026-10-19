@@ -11,9 +11,22 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.BoxLayout;
+import javax.swing.border.EtchedBorder;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
+import javax.swing.JTextArea;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 
 public class VistaApp extends JFrame {
 
@@ -42,7 +55,7 @@ public class VistaApp extends JFrame {
 
 	public VistaApp() {
 
-		setTitle("Simulador de guerra");
+		setTitle("Batalla por la Tierra Media");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 450);
 
@@ -57,7 +70,7 @@ public class VistaApp extends JFrame {
 
 		gbl_contentPane.columnWeights = new double[] { 1.0, 1.0, Double.MIN_VALUE };
 
-		gbl_contentPane.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 1.0, 1.0 };
 
 		contentPane.setLayout(gbl_contentPane);
 
@@ -208,7 +221,7 @@ public class VistaApp extends JFrame {
 		gbc_bestiasPane.gridy = 0;
 		gbc_bestiasPane.weightx = 1.0;
 		gbc_bestiasPane.fill = GridBagConstraints.HORIZONTAL;
-		gbc_bestiasPane.insets = new Insets(5, 5, 5, 5);
+		gbc_bestiasPane.insets = new Insets(5, 5, 5, 0);
 
 		contentPane.add(bestiasPane, gbc_bestiasPane);
 
@@ -340,15 +353,157 @@ public class VistaApp extends JFrame {
 		luchaPane.setBorder(new TitledBorder(null, "Lucha", TitledBorder.LEFT, TitledBorder.ABOVE_TOP, null, null));
 
 		GridBagConstraints gbc_luchaPane = new GridBagConstraints();
-		
+		gbc_luchaPane.insets = new Insets(5, 5, 5, 0);
+
 		gbc_luchaPane.gridx = 0;
 		gbc_luchaPane.gridy = 1;
 		gbc_luchaPane.gridwidth = 2;
 		gbc_luchaPane.weightx = 1.0;
 		gbc_luchaPane.weighty = 1.0;
 		gbc_luchaPane.fill = GridBagConstraints.BOTH;
-		gbc_luchaPane.insets = new Insets(5, 5, 5, 5);
 
 		contentPane.add(luchaPane, gbc_luchaPane);
+		luchaPane.setLayout(new BoxLayout(luchaPane, BoxLayout.Y_AXIS));
+
+		JPanel panelEjercitos = new JPanel();
+		luchaPane.add(panelEjercitos);
+		GridBagLayout gbl_panelEjercitos = new GridBagLayout();
+		gbl_panelEjercitos.columnWidths = new int[] { 0, 0 };
+		gbl_panelEjercitos.rowHeights = new int[] { 0 };
+		gbl_panelEjercitos.columnWeights = new double[] { 1.0, 0.0 };
+		gbl_panelEjercitos.rowWeights = new double[] { 1.0 };
+		panelEjercitos.setLayout(gbl_panelEjercitos);
+
+		JPanel panelHeroes = new JPanel();
+		GridBagConstraints gbc_panelHeroes = new GridBagConstraints();
+		gbc_panelHeroes.weightx = 1.0;
+		gbc_panelHeroes.insets = new Insets(15, 15, 15, 15);
+		gbc_panelHeroes.fill = GridBagConstraints.BOTH;
+		gbc_panelHeroes.gridx = 0;
+		gbc_panelHeroes.gridy = 0;
+		panelEjercitos.add(panelHeroes, gbc_panelHeroes);
+		GridBagLayout gbl_panelHeroes = new GridBagLayout();
+		gbl_panelHeroes.columnWidths = new int[] { 0, 0 };
+		gbl_panelHeroes.rowHeights = new int[] { 0, 0 };
+		gbl_panelHeroes.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gbl_panelHeroes.rowWeights = new double[] { 0.0, 0.0 };
+		panelHeroes.setLayout(gbl_panelHeroes);
+
+		JPanel panelListaHeroes = new JPanel();
+		panelListaHeroes.setBorder(new TitledBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Heroes",
+				TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(0, 0, 0)));
+		GridBagConstraints gbc_panelListaHeroes = new GridBagConstraints();
+		gbc_panelListaHeroes.weighty = 1.0;
+		gbc_panelListaHeroes.weightx = 1.0;
+		gbc_panelListaHeroes.fill = GridBagConstraints.BOTH;
+		gbc_panelListaHeroes.gridx = 0;
+		gbc_panelListaHeroes.gridy = 0;
+		panelHeroes.add(panelListaHeroes, gbc_panelListaHeroes);
+
+		String[] opciones = { "Ejemplo 1", "Ejemplo 2", "Ejemplo 3", "Ejemplo 4", "Ejemplo 5", "Ejemplo 6" };
+		panelListaHeroes.setLayout(new GridLayout(0, 1, 0, 0));
+		JList<String> listHeroes = new JList<>(opciones);
+		JScrollPane scrollPaneListaHeroes = new JScrollPane(listHeroes);
+		scrollPaneListaHeroes.setPreferredSize(new Dimension(200, 100));
+		listHeroes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		panelListaHeroes.add(scrollPaneListaHeroes);
+
+		JPanel panelOpcionesListaHeroes = new JPanel();
+		GridBagConstraints gbc_panelOpcionesListaHeroes = new GridBagConstraints();
+		gbc_panelOpcionesListaHeroes.fill = GridBagConstraints.HORIZONTAL;
+		gbc_panelOpcionesListaHeroes.weightx = 1.0;
+		gbc_panelOpcionesListaHeroes.gridx = 0;
+		gbc_panelOpcionesListaHeroes.gridy = 1;
+		panelHeroes.add(panelOpcionesListaHeroes, gbc_panelOpcionesListaHeroes);
+		panelOpcionesListaHeroes.setLayout(new GridLayout(1, 3, 5, 5));
+
+		JButton btnSubirHeroe = new JButton("Subir");
+		panelOpcionesListaHeroes.add(btnSubirHeroe);
+
+		JButton btnBajarHeroe = new JButton("Bajar");
+		panelOpcionesListaHeroes.add(btnBajarHeroe);
+
+		JButton btnEliminarHeroe = new JButton("Eliminar");
+		btnEliminarHeroe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		panelOpcionesListaHeroes.add(btnEliminarHeroe);
+
+		JPanel panelBestias = new JPanel();
+		GridBagConstraints gbc_panelBestias = new GridBagConstraints();
+		gbc_panelBestias.weightx = 1.0;
+		gbc_panelBestias.insets = new Insets(15, 15, 15, 15);
+		gbc_panelBestias.fill = GridBagConstraints.BOTH;
+		gbc_panelBestias.gridx = 1;
+		gbc_panelBestias.gridy = 0;
+		panelEjercitos.add(panelBestias, gbc_panelBestias);
+		GridBagLayout gbl_panelBestias = new GridBagLayout();
+		gbl_panelBestias.columnWidths = new int[] { 0, 0 };
+		gbl_panelBestias.rowHeights = new int[] { 0, 0 };
+		gbl_panelBestias.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gbl_panelBestias.rowWeights = new double[] { 0.0, 0.0 };
+		panelBestias.setLayout(gbl_panelBestias);
+
+		JPanel panelListaBestias = new JPanel();
+		panelListaBestias
+				.setBorder(new TitledBorder(null, "Bestias", TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, null));
+		GridBagConstraints gbc_panelListaBestias = new GridBagConstraints();
+		gbc_panelListaBestias.weighty = 1.0;
+		gbc_panelListaBestias.fill = GridBagConstraints.BOTH;
+		gbc_panelListaBestias.insets = new Insets(0, 0, 5, 0);
+		gbc_panelListaBestias.gridx = 0;
+		gbc_panelListaBestias.gridy = 0;
+		panelBestias.add(panelListaBestias, gbc_panelListaBestias);
+
+		String[] opcionesBestias = { "Ejemplo 2", "Ejemplo 1", "Ejemplo 6", "Ejemplo 7", "Ejemplo 4", "Ejemplo 3" };
+		panelListaBestias.setLayout(new GridLayout(0, 1, 0, 0));
+		JList<String> listBestias = new JList<>(opcionesBestias);
+		JScrollPane scrollPaneListaBestias = new JScrollPane(listBestias);
+		scrollPaneListaBestias.setPreferredSize(new Dimension(200, 100));
+		listBestias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		panelListaBestias.add(scrollPaneListaBestias);
+
+		JPanel panelOpcionesListaBestias = new JPanel();
+		GridBagConstraints gbc_panelOpcionesListaBestias = new GridBagConstraints();
+		gbc_panelOpcionesListaBestias.weightx = 1.0;
+		gbc_panelOpcionesListaBestias.fill = GridBagConstraints.HORIZONTAL;
+		gbc_panelOpcionesListaBestias.gridx = 0;
+		gbc_panelOpcionesListaBestias.gridy = 1;
+		panelBestias.add(panelOpcionesListaBestias, gbc_panelOpcionesListaBestias);
+		panelOpcionesListaBestias.setLayout(new GridLayout(1, 3, 5, 5));
+
+		JButton btnSubirBestia = new JButton("Subir");
+		panelOpcionesListaBestias.add(btnSubirBestia);
+
+		JButton btnBajarBestia = new JButton("Bajar");
+		panelOpcionesListaBestias.add(btnBajarBestia);
+
+		JButton btnEliminarBestia = new JButton("Eliminar");
+		panelOpcionesListaBestias.add(btnEliminarBestia);
+
+		JPanel panelBtnLucha = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panelBtnLucha.getLayout();
+		flowLayout.setVgap(6);
+		luchaPane.add(panelBtnLucha);
+
+		JButton btnlucha = new JButton("¡LUCHA!");
+		btnlucha.setMargin(new Insets(2, 45, 2, 45));
+		btnlucha.setAlignmentX(0.5f);
+		panelBtnLucha.add(btnlucha);
+
+		JPanel panelResultado = new JPanel();
+		GridBagConstraints gbc_panelResultado = new GridBagConstraints();
+		gbc_panelResultado.gridwidth = 2;
+		gbc_panelResultado.insets = new Insets(0, 5, 5, 5);
+		gbc_panelResultado.fill = GridBagConstraints.BOTH;
+		gbc_panelResultado.gridx = 0;
+		gbc_panelResultado.gridy = 2;
+		contentPane.add(panelResultado, gbc_panelResultado);
+		panelResultado.setLayout(new GridLayout(0, 1, 0, 0));
+
+		JTextArea textAreaResultadoGuerra = new JTextArea();
+		panelResultado.add(textAreaResultadoGuerra);
 	}
 }
