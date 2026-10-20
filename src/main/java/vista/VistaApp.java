@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -25,6 +26,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+
+import TiposYInterfaces.tipoPersonajes;
 
 /**
  * Vista de la aplicación "Batalla por la Tierra Media".
@@ -160,9 +163,10 @@ public class VistaApp extends JFrame {
 		gbc_lblTipoHeroes.insets = new Insets(3, 5, 3, 5);
 		heroesPane.add(lblTipoHeroes, gbc_lblTipoHeroes);
 
+		// Combo de tipo de Bestia: se crea vacío; sus opciones se cargan en
+		// cargarTiposBestias() al final del constructor.
 		comboBoxTipoHeroe = new JComboBox<>();
 		lblTipoHeroes.setLabelFor(comboBoxTipoHeroe);
-		comboBoxTipoHeroe.setModel(new DefaultComboBoxModel<>(new String[] { "Humano", "Elfo", "Hobbit" }));
 		comboBoxTipoHeroe.setToolTipText("Selecciona el tipo del héroe que quieres añadir.");
 		GridBagConstraints gbc_comboBoxTipoHeroe = new GridBagConstraints();
 		gbc_comboBoxTipoHeroe.gridx = 1;
@@ -267,9 +271,10 @@ public class VistaApp extends JFrame {
 		gbc_lblTipoBestias.insets = new Insets(3, 5, 3, 5);
 		bestiasPane.add(lblTipoBestias, gbc_lblTipoBestias);
 
+		// Combo de tipo de Bestia: se crea vacío; sus opciones se cargan en
+		// cargarTiposBestias() al final del constructor.
 		comboBoxTipoBestia = new JComboBox<>();
 		lblTipoBestias.setLabelFor(comboBoxTipoBestia);
-		comboBoxTipoBestia.setModel(new DefaultComboBoxModel<>(new String[] { "Orco", "Trasgo" }));
 		comboBoxTipoBestia.setToolTipText("Selecciona el tipo de bestia que quieres añadir.");
 		GridBagConstraints gbc_comboBoxTipoBestia = new GridBagConstraints();
 		gbc_comboBoxTipoBestia.gridx = 1;
@@ -494,6 +499,13 @@ public class VistaApp extends JFrame {
 		textAreaResultadoGuerra = new JTextArea();
 		textAreaResultadoGuerra.setEditable(false);
 		panelResultado.add(new JScrollPane(textAreaResultadoGuerra));
+
+		// ===== Carga inicial de datos =====
+		// Rellena los desplegables de tipo con las especies definidas en el enum
+		// tipoPersonajes. Va al final del constructor para que los combos ya estén
+		// creados y añadidos al panel.
+		cargarTiposBestias();
+		cargarTiposHeroes();
 	}
 
 	// =====================================================================
@@ -591,5 +603,42 @@ public class VistaApp extends JFrame {
 
 	public JTextArea getTextAreaResultadoGuerra() {
 		return textAreaResultadoGuerra;
+	}
+
+	/**
+	 * Rellena el desplegable de tipo de héroe con las especies disponibles (Humano,
+	 * Elfo, Hobbit), tomadas de {@link tipoPersonajes#getTipoHeroes()}.
+	 * <p>
+	 * El orden de los elementos del combo coincide con el del array devuelto por
+	 * getTipoHeroes(), por lo que el controlador puede usar getSelectedIndex() para
+	 * recuperar el tipo elegido. Deja seleccionado el primer elemento por defecto.
+	 */
+	private void cargarTiposHeroes() {
+		tipoPersonajes[] heroes = tipoPersonajes.getTipoHeroes();
+		String[] especiesHeroes = new String[heroes.length];
+		for (int i = 0; i < heroes.length; i++) {
+			especiesHeroes[i] = heroes[i].getESPECIE();
+		}
+		comboBoxTipoHeroe.setModel(new DefaultComboBoxModel<>(especiesHeroes));
+		comboBoxTipoHeroe.setSelectedIndex(0);
+	}
+
+	/**
+	 * Rellena el desplegable de tipo de bestia con las especies disponibles (Orco,
+	 * Trasgo), tomadas de {@link tipoPersonajes#getTipoBestias()}.
+	 * <p>
+	 * Igual que en los héroes, el orden del combo coincide con el del array de
+	 * tipos y se deja seleccionado el primer elemento.
+	 */
+	private void cargarTiposBestias() {
+		tipoPersonajes[] bestias = tipoPersonajes.getTipoBestias();
+		String[] especiesBestias = new String[bestias.length];
+
+		for (int i = 0; i < especiesBestias.length; i++) {
+			especiesBestias[i] = bestias[i].getESPECIE();
+		}
+
+		comboBoxTipoBestia.setModel(new DefaultComboBoxModel<>(especiesBestias));
+		comboBoxTipoBestia.setSelectedIndex(0);
 	}
 }
