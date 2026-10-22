@@ -18,6 +18,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import Ejercito.Ejercito;
+import Excepciones.ReclutaNoValidoException;
 import Guerra.Guerra.Combate;
 import Personajes.Bestia;
 import Personajes.Heroe;
@@ -51,7 +52,7 @@ class GuerraTest {
 	@DisplayName("El registro devuelto no es nulo ni está vacío")
 	@ParameterizedTest(name = "Caso {index}: {0} héroes vs {1} bestias")
 	@MethodSource("combinacionesDeTamanos")
-	void guerraDevuelveRegistroCorrecto(int numHeroes, int numBestias) {
+	void guerraDevuelveRegistroCorrecto(int numHeroes, int numBestias) throws ReclutaNoValidoException {
 		rellenarEjercitos(numHeroes, numBestias);
 
 		guerra = new Guerra(ejercitoHeroes, ejercitoBestias, registroCombates);
@@ -67,7 +68,7 @@ class GuerraTest {
 	@DisplayName("Todos los turnos registrados tienen al menos un combate")
 	@ParameterizedTest(name = "Caso {index}: {0} héroes vs {1} bestias")
 	@MethodSource("combinacionesDeTamanos")
-	void todosLosTurnosTienenCombates(int numHeroes, int numBestias) {
+	void todosLosTurnosTienenCombates(int numHeroes, int numBestias) throws ReclutaNoValidoException {
 		rellenarEjercitos(numHeroes, numBestias);
 
 		guerra = new Guerra(ejercitoHeroes, ejercitoBestias, registroCombates);
@@ -83,7 +84,7 @@ class GuerraTest {
 	@DisplayName("Los turnos son consecutivos, sin huecos")
 	@ParameterizedTest(name = "Caso {index}: {0} héroes vs {1} bestias")
 	@MethodSource("combinacionesDeTamanos")
-	void losTurnosSonConsecutivos(int numHeroes, int numBestias) {
+	void losTurnosSonConsecutivos(int numHeroes, int numBestias) throws ReclutaNoValidoException {
 		rellenarEjercitos(numHeroes, numBestias);
 
 		guerra = new Guerra(ejercitoHeroes, ejercitoBestias, registroCombates);
@@ -103,7 +104,7 @@ class GuerraTest {
 	@DisplayName("Ningún combate tiene héroe o bestia nulos")
 	@ParameterizedTest(name = "Caso {index}: {0} héroes vs {1} bestias")
 	@MethodSource("combinacionesDeTamanos")
-	void ningunCombateTieneParticipantesNulos(int numHeroes, int numBestias) {
+	void ningunCombateTieneParticipantesNulos(int numHeroes, int numBestias) throws ReclutaNoValidoException {
 		rellenarEjercitos(numHeroes, numBestias);
 
 		guerra = new Guerra(ejercitoHeroes, ejercitoBestias, registroCombates);
@@ -120,7 +121,7 @@ class GuerraTest {
 	@Tag("valores-fijos")
 	@DisplayName("El registro está vacío antes de iniciar la guerra")
 	@Test
-	void registroVacioAntesDeIniciarLaGuerra() {
+	void registroVacioAntesDeIniciarLaGuerra() throws ReclutaNoValidoException {
 		ejercitoHeroes.anadirRecluta(crearHeroe("Heroe", 10, 2));
 		ejercitoBestias.anadirRecluta(crearBestia("Bestia", 10, 2));
 
@@ -132,7 +133,7 @@ class GuerraTest {
 	@Tag("valores-fijos")
 	@DisplayName("Un héroe muy fuerte contra una bestia débil termina en un turno")
 	@Test
-	void heroeMuyFuerteContraBestiaDebilTerminaEnUnTurno() {
+	void heroeMuyFuerteContraBestiaDebilTerminaEnUnTurno() throws ReclutaNoValidoException {
 		ejercitoHeroes.anadirRecluta(crearHeroe("Heroe fuerte", 20, 1));
 		ejercitoBestias.anadirRecluta(crearBestia("Bestia debil", 1, 0));
 
@@ -148,7 +149,7 @@ class GuerraTest {
 	@Tag("valores-fijos")
 	@DisplayName("El registro contiene los nombres de los participantes")
 	@Test
-	void elRegistroContieneLosNombresDeLosParticipantes() {
+	void elRegistroContieneLosNombresDeLosParticipantes() throws ReclutaNoValidoException {
 		ejercitoHeroes.anadirRecluta(crearHeroe("Aragorn", 20, 1));
 		ejercitoBestias.anadirRecluta(crearBestia("Shrek", 1, 0));
 
@@ -161,9 +162,19 @@ class GuerraTest {
 		assertEquals("Shrek", combate.getBestia());
 	}
 
+	// ---------- Tests de excepciones ----------
+
+	@Tag("excepciones")
+	@DisplayName("Un recluta inválido lanza ReclutaNoValidoException")
+	@Test
+	void reclutaInvalidoLanzaExcepcion() {
+		// Ajusta los valores a lo que tu lógica considere "no válido".
+		assertThrows(ReclutaNoValidoException.class, () -> ejercitoHeroes.anadirRecluta(crearHeroe("Debil", -5, 1)));
+	}
+
 	// ---------- Auxiliares ----------
 
-	private void rellenarEjercitos(int numHeroes, int numBestias) {
+	private void rellenarEjercitos(int numHeroes, int numBestias) throws ReclutaNoValidoException {
 		for (int i = 0; i < numHeroes; i++) {
 			ejercitoHeroes.anadirRecluta(crearHeroeAleatorio(i));
 		}
@@ -171,6 +182,11 @@ class GuerraTest {
 		for (int i = 0; i < numBestias; i++) {
 			ejercitoBestias.anadirRecluta(crearBestiaAleatoria(i));
 		}
+
+		// Garantiza que el escenario ejecutado es el que se parametrizó.
+		// Ajusta getReclutas() al nombre real del método de tu clase Ejercito.
+		assertEquals(numHeroes, ejercitoHeroes.getReclutas().size());
+		assertEquals(numBestias, ejercitoBestias.getReclutas().size());
 	}
 
 	static Stream<Arguments> combinacionesDeTamanos() {
