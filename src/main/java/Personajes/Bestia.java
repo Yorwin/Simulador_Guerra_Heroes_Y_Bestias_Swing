@@ -79,6 +79,19 @@ public class Bestia extends Personaje {
 	}
 
 	/**
+	 * Devuelve una representación textual de la bestia con su nombre, tipo de
+	 * personaje, puntos de vida y nivel de resistencia.
+	 *
+	 * @return una cadena con el formato: nombre - tipo (vida, resistencia)
+	 */
+	@Override
+	public String toString() {
+		String headerBestia = String.format("%s - %s (%d, %d)", getNombre(), getTipoPersonaje(), getPuntosDeVida(),
+				getNivelResistencia());
+		return headerBestia;
+	}
+
+	/**
 	 * Permite construir objetos {@link Bestia} mediante la configuración progresiva
 	 * de sus atributos.
 	 * <p>

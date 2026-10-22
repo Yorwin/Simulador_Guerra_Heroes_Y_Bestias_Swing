@@ -57,19 +57,16 @@ public class Ejercito<T> {
 	 * con el tipo de este ejercito.
 	 *
 	 * @param recluta recluta que se desea añadir
+	 * @throws ReclutaNoValidoException
 	 * @throws IllegalArgumentException si el recluta es nulo
 	 */
-	public void anadirRecluta(T recluta) {
+	public void anadirRecluta(T recluta) throws ReclutaNoValidoException {
 		if (recluta == null) {
 			LOGGER.warning("Intento de añadir un recluta nulo al ejército.");
 			throw new IllegalArgumentException("El recluta no puede ser nulo.");
 		}
 
-		try {
-			validarRecluta(recluta);
-		} catch (ReclutaNoValidoException e) {
-			LOGGER.warning(e.getMessage());
-		}
+		validarRecluta(recluta);
 		reclutas.add(recluta);
 	}
 
@@ -177,7 +174,11 @@ public class Ejercito<T> {
 		ArrayList<T> reclutasEjercitoActual = getReclutas();
 
 		for (T recluta : reclutasEjercitoActual) {
-			copiaEjercito.anadirRecluta(recluta);
+			try {
+				copiaEjercito.anadirRecluta(recluta);
+			} catch (ReclutaNoValidoException e) {
+				LOGGER.warning(e.getMessage());
+			}
 		}
 
 		return copiaEjercito;

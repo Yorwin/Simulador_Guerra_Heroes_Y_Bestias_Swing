@@ -62,6 +62,19 @@ public class Heroe extends Personaje {
 	}
 
 	/**
+	 * Devuelve una representación textual del héroe con su nombre, tipo de
+	 * personaje, puntos de vida y nivel de resistencia.
+	 *
+	 * @return una cadena con el formato: nombre - tipo (vida, resistencia)
+	 */
+	@Override
+	public String toString() {
+		String headerHeroe = String.format("%s - %s (%d, %d)", getNombre(), getTipoPersonaje(), getPuntosDeVida(),
+				getNivelResistencia());
+		return headerHeroe;
+	}
+
+	/**
 	 * Builder específico para construir objetos de tipo Heroe.
 	 *
 	 * Valida los datos antes de asignarlos y antes de construir el objeto.

@@ -27,6 +27,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import Ejercito.Ejercito;
+import Personajes.Bestia;
+import Personajes.Heroe;
 import TiposYInterfaces.tipoPersonajes;
 
 /**
@@ -57,15 +60,15 @@ public class VistaApp extends JFrame {
 	private JButton btnAnadirBestia;
 
 	// ---------- Ejército de héroes (lista + botones) ----------
-	private DefaultListModel<String> modeloHeroes;
-	private JList<String> listHeroes;
+	private DefaultListModel<Heroe> modeloHeroes;
+	private JList<Heroe> listHeroes;
 	private JButton btnSubirHeroe;
 	private JButton btnBajarHeroe;
 	private JButton btnEliminarHeroe;
 
 	// ---------- Ejército de bestias (lista + botones) ----------
-	private DefaultListModel<String> modeloBestias;
-	private JList<String> listBestias;
+	private DefaultListModel<Bestia> modeloBestias;
+	private JList<Bestia> listBestias;
 	private JButton btnSubirBestia;
 	private JButton btnBajarBestia;
 	private JButton btnEliminarBestia;
@@ -555,11 +558,11 @@ public class VistaApp extends JFrame {
 	}
 
 	// ---------- Ejército de héroes ----------
-	public DefaultListModel<String> getModeloHeroes() {
+	public DefaultListModel<Heroe> getModeloHeroes() {
 		return modeloHeroes;
 	}
 
-	public JList<String> getListHeroes() {
+	public JList<Heroe> getListHeroes() {
 		return listHeroes;
 	}
 
@@ -576,11 +579,11 @@ public class VistaApp extends JFrame {
 	}
 
 	// ---------- Ejército de bestias ----------
-	public DefaultListModel<String> getModeloBestias() {
+	public DefaultListModel<Bestia> getModeloBestias() {
 		return modeloBestias;
 	}
 
-	public JList<String> getListBestias() {
+	public JList<Bestia> getListBestias() {
 		return listBestias;
 	}
 
