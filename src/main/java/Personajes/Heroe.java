@@ -34,6 +34,22 @@ public class Heroe extends Personaje {
 	}
 
 	/**
+	 * Constructor de copia: crea un nuevo héroe a partir de otro existente.
+	 * <p>
+	 * Delega en el constructor de la clase padre para copiar los atributos comunes
+	 * de todo personaje (por ejemplo nombre, puntos de vida y nivel de resistencia)
+	 * y después copia el tipo de personaje propio del héroe. La nueva instancia es
+	 * independiente de la original.
+	 * </p>
+	 *
+	 * @param otro el héroe que se quiere copiar.
+	 */
+	public Heroe(Heroe otro) {
+		super(otro);
+		this.tipoPersonaje = otro.tipoPersonaje;
+	}
+
+	/**
 	 * Devuelve el tipo de personaje del héroe.
 	 *
 	 * @return Especie del héroe.
@@ -59,6 +75,22 @@ public class Heroe extends Personaje {
 		int danoBase = Math.max(tiradaUno, tiradaDos);
 
 		return tipoPersonaje.aplicarAfectacion(enemigo, danoBase);
+	}
+
+	/**
+	 * Crea y devuelve una copia independiente de este héroe.
+	 * <p>
+	 * Utiliza el constructor de copia {@link #Heroe(Heroe)}, por lo que el nuevo
+	 * héroe conserva los mismos valores (nombre, puntos de vida, nivel de
+	 * resistencia y tipo de personaje) pero es un objeto distinto. Los cambios
+	 * realizados sobre la copia no afectan al original.
+	 * </p>
+	 *
+	 * @return un nuevo {@code Heroe} con los mismos atributos que este.
+	 */
+	@Override
+	public Heroe copiar() {
+		return new Heroe(this);
 	}
 
 	/**

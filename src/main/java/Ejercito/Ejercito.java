@@ -17,7 +17,7 @@ import Personajes.Personaje;
  * @param <T> tipo de los reclutas que forman parte del ejercito (normalmente
  *            una subclase o implementación de {@link Personajes.Personaje})
  */
-public class Ejercito<T> {
+public class Ejercito<T extends Personaje> {
 
 	/**
 	 * Logger para registrar eventos y advertencias de la clase Ejercito.
@@ -161,21 +161,29 @@ public class Ejercito<T> {
 	}
 
 	/**
-	 * Crea y devuelve una copia superficial (shallow copy) de este ejército.
+	 * Crea y devuelve una copia profunda (deep copy) de este ejército.
 	 * <p>
-	 * El nuevo ejército contendrá las mismas referencias a las unidades o reclutas
-	 * que el ejército original, conservando su orden.
+	 * Cada recluta se clona mediante su propio método {@code copiar()}, por lo que
+	 * el nuevo ejército contiene objetos independientes de los del original,
+	 * conservando su orden. Las modificaciones realizadas sobre la copia (por
+	 * ejemplo, los puntos de vida perdidos durante una guerra) no afectan al
+	 * ejército original.
+	 * </p>
+	 * <p>
+	 * Si algún recluta de la copia no resulta válido al añadirse, se registra una
+	 * advertencia en el log y se omite de la copia.
 	 * </p>
 	 *
-	 * @return una nueva instancia de {@code Ejercito<T>} con los mismos reclutas.
+	 * @return una nueva instancia de {@code Ejercito<T>} con copias independientes
+	 *         de los reclutas originales.
 	 */
+	@SuppressWarnings("unchecked")
 	public Ejercito<T> copiar() {
-		Ejercito<T> copiaEjercito = new Ejercito<T>();
-		ArrayList<T> reclutasEjercitoActual = getReclutas();
+		Ejercito<T> copiaEjercito = new Ejercito<>();
 
-		for (T recluta : reclutasEjercitoActual) {
+		for (T recluta : getReclutas()) {
 			try {
-				copiaEjercito.anadirRecluta(recluta);
+				copiaEjercito.anadirRecluta((T) recluta.copiar());
 			} catch (ReclutaNoValidoException e) {
 				LOGGER.warning(e.getMessage());
 			}

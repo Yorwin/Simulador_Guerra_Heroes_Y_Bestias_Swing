@@ -37,6 +37,22 @@ public class Bestia extends Personaje {
 	}
 
 	/**
+	 * Constructor de copia: crea una nueva bestia a partir de otra existente.
+	 * <p>
+	 * Delega en el constructor de la clase padre para copiar los atributos comunes
+	 * de todo personaje (por ejemplo nombre, puntos de vida y nivel de resistencia)
+	 * y después copia el tipo de personaje propio de la bestia. La nueva instancia
+	 * es independiente de la original.
+	 * </p>
+	 *
+	 * @param otro la bestia que se quiere copiar.
+	 */
+	public Bestia(Bestia otro) {
+		super(otro);
+		this.tipoPersonaje = otro.tipoPersonaje;
+	}
+
+	/**
 	 * Construye una bestia a partir de su builder específico, inicializando los
 	 * atributos heredados y seleccionando su tipo de personaje.
 	 *
@@ -76,6 +92,22 @@ public class Bestia extends Personaje {
 		int tirada = (int) (Math.random() * 91);
 
 		return tipoPersonaje.aplicarAfectacion(enemigo, tirada);
+	}
+
+	/**
+	 * Crea y devuelve una copia independiente de esta bestia.
+	 * <p>
+	 * Utiliza el constructor de copia {@link #Bestia(Bestia)}, por lo que la nueva
+	 * bestia conserva los mismos valores (nombre, puntos de vida, nivel de
+	 * resistencia y tipo de personaje) pero es un objeto distinto. Los cambios
+	 * realizados sobre la copia no afectan al original.
+	 * </p>
+	 *
+	 * @return una nueva {@code Bestia} con los mismos atributos que esta.
+	 */
+	@Override
+	public Bestia copiar() {
+		return new Bestia(this);
 	}
 
 	/**

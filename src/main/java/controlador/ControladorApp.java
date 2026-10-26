@@ -1,11 +1,11 @@
 package controlador;
 
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -29,9 +29,6 @@ public class ControladorApp {
 
 	private Ejercito<Heroe> ejercitoHeroes = new Ejercito<>();
 	private Ejercito<Bestia> ejercitoBestias = new Ejercito<>();
-	private RegistroCombates registroCombates = new RegistroCombates();
-	private ArrayList<String> narracion = new ArrayList<String>();
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	public ControladorApp(VistaApp vista) {
 
@@ -44,17 +41,16 @@ public class ControladorApp {
 			int indexTipoSeleccionado = vista.getComboBoxTipoHeroe().getSelectedIndex();
 			tipoPersonajes tipo = tipoPersonajes.getTipoHeroes()[indexTipoSeleccionado];
 
-			// Vida Heroe.
-			int vida = Integer.valueOf(vista.getTextFieldVidaHeroe().getText());
-
-			// Armadura Heroe.
-			int armadura = Integer.valueOf(vista.getTextFieldArmaduraHeroe().getText());
-
-			Heroe heroe;
-
 			try {
+
+				// Vida Heroe.
+				int vida = Integer.valueOf(vista.getTextFieldVidaHeroe().getText().trim());
+
+				// Armadura Heroe.
+				int armadura = Integer.valueOf(vista.getTextFieldArmaduraHeroe().getText().trim());
+
 				// Crear heroe.
-				heroe = new Heroe.Builder().nombre(nombre).nivelDeResistencia(armadura).puntosDeVida(vida)
+				Heroe heroe = new Heroe.Builder().nombre(nombre).nivelDeResistencia(armadura).puntosDeVida(vida)
 						.tipoPersonaje(tipo.getESPECIE()).build();
 
 				// Añadir heroe a ejercito.
@@ -62,18 +58,22 @@ public class ControladorApp {
 
 				// Modelo Visual de la lista.
 				vista.getModeloHeroes().addElement(ejercitoHeroes.getReclutas().get(ejercitoHeroes.length() - 1));
-			} catch (IllegalArgumentException e1) {
+			} catch (NumberFormatException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(vista.getContentPane(), String.format("Recuerda \n %s", e1.getMessage()),
-						"Aviso", JOptionPane.WARNING_MESSAGE);
-			} catch (ReclutaNoValidoException e2) {
-				e2.printStackTrace();
 				JOptionPane.showMessageDialog(vista.getContentPane(),
-						String.format("¡Ha Ocurrido un Error!", e2.getMessage()), "Aviso", JOptionPane.WARNING_MESSAGE);
-			} catch (Exception e3) {
+						"La vida y la armadura deben ser números enteros.", "Aviso", JOptionPane.WARNING_MESSAGE);
+			} catch (IllegalArgumentException e2) {
+				e2.printStackTrace();
+				JOptionPane.showMessageDialog(vista.getContentPane(), String.format("Recuerda \n %s", e2.getMessage()),
+						"Aviso", JOptionPane.WARNING_MESSAGE);
+			} catch (ReclutaNoValidoException e3) {
 				e3.printStackTrace();
 				JOptionPane.showMessageDialog(vista.getContentPane(),
 						String.format("¡Ha Ocurrido un Error!", e3.getMessage()), "Aviso", JOptionPane.WARNING_MESSAGE);
+			} catch (Exception e4) {
+				e4.printStackTrace();
+				JOptionPane.showMessageDialog(vista.getContentPane(),
+						String.format("¡Ha Ocurrido un Error!", e4.getMessage()), "Aviso", JOptionPane.WARNING_MESSAGE);
 			}
 		});
 
@@ -114,17 +114,16 @@ public class ControladorApp {
 			int indexTipoSeleccionado = vista.getComboBoxTipoBestia().getSelectedIndex();
 			tipoPersonajes tipo = tipoPersonajes.getTipoBestias()[indexTipoSeleccionado];
 
-			// Vida Bestia.
-			int vida = Integer.valueOf(vista.getTextFieldVidaBestia().getText());
-
-			// Armadura Bestia.
-			int armadura = Integer.valueOf(vista.getTextFieldArmaduraBestia().getText());
-
-			Bestia bestia;
-
 			try {
+
+				// Vida Bestia.
+				int vida = Integer.valueOf(vista.getTextFieldVidaBestia().getText());
+
+				// Armadura Bestia.
+				int armadura = Integer.valueOf(vista.getTextFieldArmaduraBestia().getText());
+
 				// Crear bestia.
-				bestia = new Bestia.Builder().nombre(nombre).nivelDeResistencia(armadura).puntosDeVida(vida)
+				Bestia bestia = new Bestia.Builder().nombre(nombre).nivelDeResistencia(armadura).puntosDeVida(vida)
 						.tipoPersonaje(tipo.getESPECIE()).build();
 
 				// Añadir bestia a ejercito.
@@ -132,17 +131,21 @@ public class ControladorApp {
 
 				// Modelo Visual de la lista.
 				vista.getModeloBestias().addElement(ejercitoBestias.getReclutas().get(ejercitoBestias.length() - 1));
-			} catch (IllegalArgumentException e1) {
+			} catch (NumberFormatException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(vista.getContentPane(), String.format("Recuerda \n %s", e1.getMessage()),
-						"Aviso", JOptionPane.WARNING_MESSAGE);
-			} catch (ReclutaNoValidoException e2) {
-				e2.printStackTrace();
 				JOptionPane.showMessageDialog(vista.getContentPane(),
-						String.format("¡Ha Ocurrido un Error!", e2.getMessage()), "Aviso", JOptionPane.WARNING_MESSAGE);
-			} catch (Exception e3) {
+						"La vida y la armadura deben ser números enteros.", "Aviso", JOptionPane.WARNING_MESSAGE);
+			} catch (IllegalArgumentException e2) {
+				e2.printStackTrace();
+				JOptionPane.showMessageDialog(vista.getContentPane(), String.format("Recuerda \n %s", e2.getMessage()),
+						"Aviso", JOptionPane.WARNING_MESSAGE);
+			} catch (ReclutaNoValidoException e3) {
 				e3.printStackTrace();
-				JOptionPane.showMessageDialog(vista.getContentPane(), String.format("Recuerda \n %s", e3.getMessage()),
+				JOptionPane.showMessageDialog(vista.getContentPane(),
+						String.format("¡Ha Ocurrido un Error!", e3.getMessage()), "Aviso", JOptionPane.WARNING_MESSAGE);
+			} catch (Exception e4) {
+				e4.printStackTrace();
+				JOptionPane.showMessageDialog(vista.getContentPane(), String.format("Recuerda \n %s", e4.getMessage()),
 						"Aviso", JOptionPane.WARNING_MESSAGE);
 			}
 		});
@@ -239,38 +242,53 @@ public class ControladorApp {
 			}
 		});
 
-		SwingWorker<ArrayList<String>, Void> worker = new SwingWorker<ArrayList<String>, Void>() {
-
-			private Future<ArrayList<String>> futuro;
+		vista.getBtnLucha().addMouseListener(new MouseAdapter() {
 
 			@Override
-			protected ArrayList<String> doInBackground() throws Exception {
-				futuro = executor.submit(new InterpretadorGuerra(registroCombates));
-				Guerra guerra = new Guerra(ejercitoHeroes.copiar(), ejercitoBestias.copiar(), registroCombates);
-				guerra.start();
-				return futuro.get();
-			}
+			public void mouseClicked(MouseEvent e) {
+				vista.getTextAreaResultadoGuerra().setText("");
+				vista.getBtnLucha().setEnabled(false);
 
-			protected void done() {
-				try {
-					narracion = get();
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-					vista.getTextAreaResultadoGuerra().setText("Se interrumpio la batalla");
-				} catch (ExecutionException e) {
-					e.getCause().printStackTrace();
-					vista.getTextAreaResultadoGuerra().setText("Error durante la batalla");
-				} finally {
-					vista.getBtnLucha().setEnabled(true);
+				if (ejercitoHeroes.length() <= 0 || ejercitoBestias.length() <= 0) {
+					return;
 				}
-			}
-		};
 
-		vista.getBtnLucha().addActionListener(e -> {
-			vista.getTextAreaResultadoGuerra().setText("");
-			vista.getBtnLucha().setEnabled(false);
-			worker.execute();
-			narracion.forEach(element -> vista.getTextAreaResultadoGuerra().append(element));
+				RegistroCombates registro = new RegistroCombates();
+				Guerra guerra = new Guerra(ejercitoHeroes.copiar(), ejercitoBestias.copiar(), registro);
+
+				new SwingWorker<ArrayList<String>, String>() {
+
+					@Override
+					protected ArrayList<String> doInBackground() throws Exception {
+						InterpretadorGuerra interpretador = new InterpretadorGuerra(registro, texto -> publish(texto));
+						guerra.start();
+						return interpretador.call();
+					}
+
+					@Override
+					protected void process(List<String> lineas) {
+						for (String linea : lineas) {
+							vista.getTextAreaResultadoGuerra().append(linea);
+						}
+					}
+
+					@Override
+					protected void done() {
+						try {
+							get();
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+							vista.getTextAreaResultadoGuerra().setText("Se interrumpio la batalla");
+						} catch (ExecutionException e) {
+							e.getCause().printStackTrace();
+							vista.getTextAreaResultadoGuerra().setText("Error durante la batalla");
+						} finally {
+							vista.getBtnLucha().setEnabled(true);
+						}
+					}
+				}.execute();
+
+			}
 		});
 
 		// Estado inicial de los botones.

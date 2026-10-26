@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import org.apache.commons.text.StringSubstitutor;
 
@@ -44,16 +45,33 @@ public class InterpretadorGuerra implements Callable<ArrayList<String>> {
 	 */
 	ArrayList<String> listaCombates;
 
+	private final Consumer<String> salida;
+
 	/**
 	 * Crea un intérprete asociado a un registro de combates concreto.
+	 * <p>
+	 * Cada línea de narración se entrega a {@code salida} en cuanto está lista,
+	 * además de guardarse en la lista que devuelve {@code call()} al terminar. Así
+	 * quien use el intérprete puede mostrar la narración en tiempo real sin que
+	 * esta clase dependa de ningún componente gráfico.
+	 * </p>
+	 * <p>
+	 * {@code salida} se invoca en el mismo hilo que ejecuta el intérprete, no en el
+	 * hilo de la interfaz. Si el destino es un componente Swing, quien lo
+	 * proporcione debe encargarse del cambio de hilo (por ejemplo, con el
+	 * {@code publish()} de un {@code SwingWorker}).
+	 * </p>
 	 *
 	 * @param acontecimientos registro de combates que se irá interpretando a medida
 	 *                        que la guerra avance.
+	 * @param salida          destino al que se envía cada línea de narración según
+	 *                        se genera.
 	 */
-	public InterpretadorGuerra(RegistroCombates acontecimientos) {
+	public InterpretadorGuerra(RegistroCombates acontecimientos, Consumer<String> salida) {
 		super();
 		this.acontecimientos = acontecimientos;
 		this.listaCombates = new ArrayList<String>();
+		this.salida = salida;
 	}
 
 	/**
@@ -208,6 +226,7 @@ public class InterpretadorGuerra implements Callable<ArrayList<String>> {
 
 		String textoTerminado = mensajeFinal.toString();
 		listaCombates.add(textoTerminado);
+		salida.accept(textoTerminado);
 	}
 
 	/**
@@ -238,5 +257,6 @@ public class InterpretadorGuerra implements Callable<ArrayList<String>> {
 		}
 
 		listaCombates.add(anuncioResultado);
+		salida.accept(anuncioResultado);
 	}
 }

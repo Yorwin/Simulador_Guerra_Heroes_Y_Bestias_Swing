@@ -1,6 +1,7 @@
 TiposYInterfaces\tipoPersonajes.class
 Personajes\Bestia.class
 Personajes\Bestia$Builder.class
+controlador\ControladorApp$3$1.class
 Ejecucion\Main.class
 Guerra\Guerra.class
 Personajes\Heroe$Builder.class

@@ -49,6 +49,24 @@ public abstract class Personaje {
 	}
 
 	/**
+	 * Constructor de copia: crea un nuevo personaje a partir de otro existente.
+	 * <p>
+	 * Copia los atributos comunes de todo personaje: nombre, puntos de vida, nivel
+	 * de resistencia y tipo de recluta. Los subtipos ({@code Heroe} y
+	 * {@code Bestia}) lo invocan mediante {@code super(otro)} y después copian sus
+	 * propios atributos. La nueva instancia es independiente de la original.
+	 * </p>
+	 *
+	 * @param personaje el personaje que se quiere copiar.
+	 */
+	public Personaje(Personaje personaje) {
+		this.nombre = personaje.nombre;
+		this.puntosDeVida = personaje.puntosDeVida;
+		this.nivelResistencia = personaje.nivelResistencia;
+		this.tipoRecluta = personaje.tipoRecluta;
+	}
+
+	/**
 	 * Constructor que inicializa un personaje a partir del Builder de un héroe.
 	 *
 	 * @param builder instancia del Builder con los datos del héroe que se va a
@@ -148,6 +166,8 @@ public abstract class Personaje {
 	public tipoEjercito getTipoEjercito() {
 		return tipoRecluta;
 	};
+
+	public abstract Personaje copiar();
 
 	/**
 	 * Clase estática interna para la construcción paso a paso de objetos
