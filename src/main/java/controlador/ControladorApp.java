@@ -1,11 +1,25 @@
 package controlador;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import Ejercito.Ejercito;
 import Excepciones.ReclutaNoValidoException;
+import Guerra.Guerra;
+import Guerra.InterpretadorGuerra;
+import Guerra.RegistroCombates;
 import Personajes.Bestia;
 import Personajes.Heroe;
 import TiposYInterfaces.tipoPersonajes;
@@ -13,8 +27,11 @@ import vista.VistaApp;
 
 public class ControladorApp {
 
-	Ejercito<Heroe> ejercitoHeroes = new Ejercito<>();
-	Ejercito<Bestia> ejercitoBestias = new Ejercito<>();
+	private Ejercito<Heroe> ejercitoHeroes = new Ejercito<>();
+	private Ejercito<Bestia> ejercitoBestias = new Ejercito<>();
+	private RegistroCombates registroCombates = new RegistroCombates();
+	private ArrayList<String> narracion = new ArrayList<String>();
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	public ControladorApp(VistaApp vista) {
 
@@ -31,7 +48,7 @@ public class ControladorApp {
 			int vida = Integer.valueOf(vista.getTextFieldVidaHeroe().getText());
 
 			// Armadura Heroe.
-			int armadura = Integer.valueOf(vista.getTextFieldVidaHeroe().getText());
+			int armadura = Integer.valueOf(vista.getTextFieldArmaduraHeroe().getText());
 
 			Heroe heroe;
 
@@ -91,17 +108,17 @@ public class ControladorApp {
 		vista.getBtnAnadirBestia().addActionListener(e -> {
 
 			// Nombre Bestia.
-			String nombre = vista.getTextFieldNombreHeroe().getText();
+			String nombre = vista.getTextFieldNombreBestia().getText();
 
 			// Tipo Bestia.
-			int indexTipoSeleccionado = vista.getComboBoxTipoHeroe().getSelectedIndex();
-			tipoPersonajes tipo = tipoPersonajes.getTipoHeroes()[indexTipoSeleccionado];
+			int indexTipoSeleccionado = vista.getComboBoxTipoBestia().getSelectedIndex();
+			tipoPersonajes tipo = tipoPersonajes.getTipoBestias()[indexTipoSeleccionado];
 
 			// Vida Bestia.
-			int vida = Integer.valueOf(vista.getTextFieldVidaHeroe().getText());
+			int vida = Integer.valueOf(vista.getTextFieldVidaBestia().getText());
 
 			// Armadura Bestia.
-			int armadura = Integer.valueOf(vista.getTextFieldVidaHeroe().getText());
+			int armadura = Integer.valueOf(vista.getTextFieldArmaduraBestia().getText());
 
 			Bestia bestia;
 
@@ -137,7 +154,7 @@ public class ControladorApp {
 			case "eliminar" -> {
 				bestia = obtenerBestiaSeleccionada(vista);
 				ejercitoBestias.retirarRecluta(bestia);
-				vista.getModeloHeroes().removeElement(bestia);
+				vista.getModeloBestias().removeElement(bestia);
 			}
 			case "subir" -> {
 				cambiarOrdenBestia(vista, -1);
@@ -158,6 +175,107 @@ public class ControladorApp {
 		vista.getBtnSubirBestia().addActionListener(listenerBestias);
 		vista.getBtnBajarBestia().addActionListener(listenerBestias);
 
+		// Si se selecciona un héroe, deseleccionar las bestias y refrescar botones.
+		vista.getListHeroes().addListSelectionListener(e -> {
+			if (e.getValueIsAdjusting()) {
+				return;
+			}
+
+			if (vista.getListHeroes().getSelectedIndex() != -1) {
+				vista.getListBestias().clearSelection();
+			}
+
+			actualizarBotonesHeroes(vista);
+			actualizarBotonesBestias(vista);
+		});
+
+		// Si cambia la cantidad de héroes, refrescar botones.
+		vista.getModeloHeroes().addListDataListener(new ListDataListener() {
+			@Override
+			public void intervalAdded(ListDataEvent e) {
+				actualizarBotonesHeroes(vista);
+			}
+
+			@Override
+			public void intervalRemoved(ListDataEvent e) {
+				actualizarBotonesHeroes(vista);
+			}
+
+			@Override
+			public void contentsChanged(ListDataEvent e) {
+				actualizarBotonesHeroes(vista);
+			}
+		});
+
+		// Si se selecciona una bestia, deseleccionar los héroes y refrescar botones.
+		vista.getListBestias().addListSelectionListener(e -> {
+			if (e.getValueIsAdjusting()) {
+				return;
+			}
+
+			if (vista.getListBestias().getSelectedIndex() != -1) {
+				vista.getListHeroes().clearSelection();
+			}
+
+			actualizarBotonesHeroes(vista);
+			actualizarBotonesBestias(vista);
+		});
+
+		// Si cambia la cantidad de bestias, refrescar botones.
+		vista.getModeloBestias().addListDataListener(new ListDataListener() {
+			@Override
+			public void intervalAdded(ListDataEvent e) {
+				actualizarBotonesBestias(vista);
+			}
+
+			@Override
+			public void intervalRemoved(ListDataEvent e) {
+				actualizarBotonesBestias(vista);
+			}
+
+			@Override
+			public void contentsChanged(ListDataEvent e) {
+				actualizarBotonesBestias(vista);
+			}
+		});
+
+		SwingWorker<ArrayList<String>, Void> worker = new SwingWorker<ArrayList<String>, Void>() {
+
+			private Future<ArrayList<String>> futuro;
+
+			@Override
+			protected ArrayList<String> doInBackground() throws Exception {
+				futuro = executor.submit(new InterpretadorGuerra(registroCombates));
+				Guerra guerra = new Guerra(ejercitoHeroes.copiar(), ejercitoBestias.copiar(), registroCombates);
+				guerra.start();
+				return futuro.get();
+			}
+
+			protected void done() {
+				try {
+					narracion = get();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					vista.getTextAreaResultadoGuerra().setText("Se interrumpio la batalla");
+				} catch (ExecutionException e) {
+					e.getCause().printStackTrace();
+					vista.getTextAreaResultadoGuerra().setText("Error durante la batalla");
+				} finally {
+					vista.getBtnLucha().setEnabled(true);
+				}
+			}
+		};
+
+		vista.getBtnLucha().addActionListener(e -> {
+			vista.getTextAreaResultadoGuerra().setText("");
+			vista.getBtnLucha().setEnabled(false);
+			worker.execute();
+			narracion.forEach(element -> vista.getTextAreaResultadoGuerra().append(element));
+		});
+
+		// Estado inicial de los botones.
+		actualizarBotonesHeroes(vista);
+		actualizarBotonesBestias(vista);
 	}
 
 	private Heroe obtenerHeroeSeleccionado(VistaApp vista) {
@@ -220,7 +338,31 @@ public class ControladorApp {
 		Bestia bestia = vista.getModeloBestias().remove(indiceActual);
 		vista.getModeloBestias().add(nuevaPosicion, bestia);
 
-		// Mantener seleccionado el heroe desplazado.
-		vista.getListHeroes().setSelectedIndex(nuevaPosicion);
+		// Mantener seleccionada la bestia desplazada.
+		vista.getListBestias().setSelectedIndex(nuevaPosicion);
+	}
+
+	private void actualizarBotonesHeroes(VistaApp vista) {
+		actualizarBotones(vista.getListHeroes(), vista.getModeloHeroes(), vista.getBtnEliminarHeroe(),
+				vista.getBtnSubirHeroe(), vista.getBtnBajarHeroe());
+	}
+
+	private void actualizarBotonesBestias(VistaApp vista) {
+		actualizarBotones(vista.getListBestias(), vista.getModeloBestias(), vista.getBtnEliminarBestia(),
+				vista.getBtnSubirBestia(), vista.getBtnBajarBestia());
+	}
+
+	private <E> void actualizarBotones(JList<E> lista, DefaultListModel<E> modelo, JButton botonEliminar,
+			JButton botonSubir, JButton botonBajar) {
+
+		int cantidad = modelo.getSize();
+		boolean haySeleccion = lista.getSelectedIndex() != -1;
+
+		boolean puedeEliminar = cantidad > 0 && haySeleccion;
+		botonEliminar.setEnabled(puedeEliminar);
+
+		boolean puedeReordenar = cantidad >= 2 && haySeleccion;
+		botonSubir.setEnabled(puedeReordenar);
+		botonBajar.setEnabled(puedeReordenar);
 	}
 }

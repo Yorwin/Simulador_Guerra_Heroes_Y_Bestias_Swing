@@ -78,21 +78,6 @@ public class VistaApp extends JFrame {
 	private JTextArea textAreaResultadoGuerra;
 
 	/**
-	 * Punto de entrada provisional. Cuando exista el controlador, el main pasará a
-	 * esa clase (o a una clase Main) y aquí se podrá eliminar.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			try {
-				VistaApp frame = new VistaApp();
-				frame.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
-	/**
 	 * Construye la ventana principal. Estructura general (GridBagLayout 2x3):
 	 * 
 	 * fila 0: [ formulario Héroes ] [ formulario Bestias ] fila 1: [ panel Lucha:
@@ -103,7 +88,7 @@ public class VistaApp extends JFrame {
 
 		setTitle("Batalla por la Tierra Media");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 450);
+		setBounds(100, 100, 1000, 700);
 
 		// ===== Panel principal =====
 		contentPane = new JPanel();
@@ -411,12 +396,15 @@ public class VistaApp extends JFrame {
 		panelOpcionesListaHeroes.setLayout(new GridLayout(1, 3, 5, 5));
 
 		btnSubirHeroe = new JButton("Subir");
+		btnSubirHeroe.setEnabled(false);
 		panelOpcionesListaHeroes.add(btnSubirHeroe);
 
 		btnBajarHeroe = new JButton("Bajar");
+		btnBajarHeroe.setEnabled(false);
 		panelOpcionesListaHeroes.add(btnBajarHeroe);
 
 		btnEliminarHeroe = new JButton("Eliminar");
+		btnEliminarHeroe.setEnabled(false);
 		panelOpcionesListaHeroes.add(btnEliminarHeroe);
 
 		// --- Ejército de bestias (columna derecha) ---
@@ -468,12 +456,15 @@ public class VistaApp extends JFrame {
 		panelOpcionesListaBestias.setLayout(new GridLayout(1, 3, 5, 5));
 
 		btnSubirBestia = new JButton("Subir");
+		btnSubirBestia.setEnabled(false);
 		panelOpcionesListaBestias.add(btnSubirBestia);
 
 		btnBajarBestia = new JButton("Bajar");
+		btnBajarBestia.setEnabled(false);
 		panelOpcionesListaBestias.add(btnBajarBestia);
 
 		btnEliminarBestia = new JButton("Eliminar");
+		btnEliminarBestia.setEnabled(false);
 		panelOpcionesListaBestias.add(btnEliminarBestia);
 
 		// --- Botón ¡LUCHA! centrado bajo los ejércitos ---
@@ -500,6 +491,9 @@ public class VistaApp extends JFrame {
 
 		// Solo lectura: el controlador escribe aquí el desarrollo de la batalla
 		textAreaResultadoGuerra = new JTextArea();
+		textAreaResultadoGuerra.setRows(8);
+		textAreaResultadoGuerra.setLineWrap(true);
+		textAreaResultadoGuerra.setWrapStyleWord(true);
 		textAreaResultadoGuerra.setEditable(false);
 		panelResultado.add(new JScrollPane(textAreaResultadoGuerra));
 
